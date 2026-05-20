@@ -1,10 +1,24 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from models import Task, SessionLocal
 from schemas import TaskCreate, Task as TaskOut
 from typing import List
 
 app = FastAPI()
+
+# Allow the Streamlit frontend to access the API during development.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8501"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def read_root():
+    return {"message": "Todolist backend is running"}
 
 def get_db():
     db = SessionLocal()

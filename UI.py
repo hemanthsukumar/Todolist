@@ -235,9 +235,14 @@ def render_task(task, completed=False):
     st.markdown("---")
 
 # --- Fetch Tasks ---
-response = requests.get(f"{API_URL}/tasks/")
+try:
+    response = requests.get(f"{API_URL}/tasks/", timeout=5)
+except requests.exceptions.RequestException:
+    st.error("Could not connect to the backend API at http://localhost:8000. Start the FastAPI server with `uvicorn main:app --reload`.")
+    st.stop()
+
 if response.status_code != 200:
-    st.error("Failed to fetch tasks.")
+    st.error("Failed to fetch tasks from the backend API.")
     st.stop()
 
 tasks = response.json()

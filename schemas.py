@@ -1,3 +1,4 @@
+import pydantic
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date
@@ -12,5 +13,8 @@ class Task(TaskCreate):
     id: int
     completed: bool
 
-    class Config:
-        orm_mode = True
+    if getattr(pydantic, "VERSION", "").startswith("2"):
+        model_config = {"from_attributes": True}
+    else:
+        class Config:
+            orm_mode = True
